@@ -33,7 +33,7 @@ function Login() {
           navigate("/profile");
         }
       }
-      console.log(res);
+      // console.log(res);
     }
   };
 
