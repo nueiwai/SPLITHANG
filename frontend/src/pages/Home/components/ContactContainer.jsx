@@ -1,0 +1,19 @@
+function ContactContainer() {
+  return (
+    <div class="relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] max-w-full bg-blue-400 border-r-4 border-blue-950 ps-2">
+      <h1 className="moderustic-md font-bold text-blue-900 text-center text-2xl my-2">
+        SplitHang
+      </h1>
+      <div className="h-1 mb-4 w-[60%] mx-auto bg-blue-700"></div>
+
+      <p className="uppercase tracking-wider font-bold text-blue-600 moderustic-md">
+        Direct Messages
+      </p>
+      <p className="uppercase tracking-wider font-bold text-blue-600 moderustic-md">
+        Group Chats
+      </p>
+    </div>
+  );
+}
+
+export default ContactContainer;

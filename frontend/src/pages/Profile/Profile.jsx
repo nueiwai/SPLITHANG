@@ -1,18 +1,27 @@
 import { useAppState } from "../../zustand/zustand";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, TextInput } from "flowbite-react";
 import defaultAvatar from "../../assets/avatar.png";
 import { apiClient } from "../../lib/api-client";
 import { UPDATE_PROFILE } from "../../utils/constants";
 import toast from "react-hot-toast";
+import { MdOutlineArrowBackIos } from "react-icons/md";
 
 //Profile
 function Profile() {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useAppState();
   const [displayName, setDisplayName] = useState("");
-  const { profilePic } = userInfo;
+  const [profilePic, setProfilePic] = useState("");
+
+  // set display name and profile picture
+  useEffect(() => {
+    if (userInfo.profileSetup) {
+      setDisplayName(userInfo.displayName);
+      setProfilePic(userInfo.profilePic);
+    }
+  }, [userInfo]);
 
   const validateProfile = async () => {
     if (!displayName) {
@@ -22,6 +31,15 @@ function Profile() {
     return true;
   };
 
+  const goToHome = () => {
+    if (userInfo.profileSetup) {
+      navigate("/home");
+    } else {
+      toast.error("Please complete your profile setup");
+    }
+  };
+
+  // set profile picture from api
   function setProfilePicture(displayName) {
     const nameParts = displayName.split(" ");
     const firstName = nameParts[0];
@@ -56,7 +74,14 @@ function Profile() {
 
   return (
     <div className="bg-blue-900 h-[100vh] w-[100vw] flex items-center justify-center">
-      <Card className="max-w-sm p-8">
+      <Card className="min-w-[90%] p-8 mx-auto">
+        <div
+          className="hover:bg-gray-100 rounded-full p-2 justify-start"
+          on
+          onClick={goToHome}
+        >
+          <MdOutlineArrowBackIos className="text-blue-900 w-10 h-10" />
+        </div>
         <div className="flex flex-col items-center pb-10">
           <img
             src={profilePic ? profilePic : defaultAvatar}
@@ -87,7 +112,7 @@ function Profile() {
               />
             </div>
             <Button
-              className="mt-4 mx-auto font-bold bg-blue-700 hover:bg-blue-600"
+              className="mt-4 mx-auto px-2 font-bold bg-blue-700 hover:bg-blue-600"
               onClick={saveProfileChanges}
             >
               Save Changes

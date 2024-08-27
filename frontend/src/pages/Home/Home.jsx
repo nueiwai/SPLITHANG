@@ -1,6 +1,9 @@
 import { useAppState } from "../../zustand/zustand";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ChatContainer from "../Home/components/ChatContainer";
+import ContactContainer from "../Home/components/ContactContainer";
+import EmptyChatContainer from "../Home/components/EmptyChatContainer";
 
 //Chat
 function Home() {
@@ -11,7 +14,13 @@ function Home() {
       navigate("/profile");
     }
   }, [userInfo, navigate]);
-  return <div>Home</div>;
+  return (
+    <div className="flex h-[100vh] w-[100vw] overflow-hidden">
+      <ContactContainer />
+      <ChatContainer />
+      {/* <EmptyChatContainer /> */}
+    </div>
+  );
 }
 
 export default Home;
