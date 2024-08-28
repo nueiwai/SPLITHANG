@@ -17,8 +17,8 @@ function Home() {
   return (
     <div className="flex h-[100vh] w-[100vw] overflow-hidden">
       <ContactContainer />
-      <ChatContainer />
       {/* <EmptyChatContainer /> */}
+      {/* <ChatContainer /> */}
     </div>
   );
 }

@@ -10,21 +10,21 @@ import { Spinner } from "flowbite-react";
 import { apiClient } from "./lib/api-client";
 import { GET_USER_INFO } from "./utils/constants";
 
-const privateRoute = ({ children }) => {
-  const { userInfo } = useAppState();
-  isAuthenticated = !!userInfo;
-  return isAuthenticated ? children : <Navigate to="/login" />;
-};
-
-const mainRoute = ({ children }) => {
-  const { userInfo } = useAppState();
-  isAuthenticated = userInfo;
-  return isAuthenticated ? <Navigate to="/home" /> : children;
-};
-
 function App() {
   const { userInfo, setUserInfo } = useAppState();
   const [loading, setLoading] = useState(true);
+
+  const PrivateRoute = ({ children }) => {
+    const { userInfo } = useAppState();
+    const isAuthenticated = !!userInfo;
+    return isAuthenticated ? children : <Navigate to="/login" />;
+  };
+
+  const MainRoute = ({ children }) => {
+    const { userInfo } = useAppState();
+    const isAuthenticated = !!userInfo;
+    return isAuthenticated ? <Navigate to="/home" /> : children;
+  };
 
   useEffect(() => {
     const getUserData = async () => {
@@ -68,36 +68,36 @@ function App() {
           <Route
             path="/signup"
             element={
-              <mainRoute>
+              <MainRoute>
                 <Signup />
-              </mainRoute>
+              </MainRoute>
             }
           />
           <Route
             path="/login"
             element={
-              <mainRoute>
+              <MainRoute>
                 <Login />
-              </mainRoute>
+              </MainRoute>
             }
           />
           <Route
             path="/home"
             element={
-              <privateRoute>
+              <PrivateRoute>
                 <Home />
-              </privateRoute>
+              </PrivateRoute>
             }
           />
           <Route
             path="/profile"
             element={
-              <privateRoute>
+              <PrivateRoute>
                 <Profile />
-              </privateRoute>
+              </PrivateRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/signup"></Navigate>} />
+          <Route path="*" element={<Navigate to="/signup" />} />
         </Routes>
       </BrowserRouter>
     </>

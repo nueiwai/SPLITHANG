@@ -1,7 +1,7 @@
-import animationData from '../assets/chat-animation.json';
+import animationData1 from '../assets/chat-animation.json';
 
-export const animationDefaultOptions = {
+export const animationDefaultOptionsChat = {
   loop: true,
   autoplay: true,
-  animationData,
+  animationData1,
 };

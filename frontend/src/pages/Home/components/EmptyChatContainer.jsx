@@ -1,4 +1,4 @@
-import { animationDefaultOptions } from "../../../lib/utils";
+import { animationDefaultOptionsChat } from "../../../lib/utils";
 import Lottie from "react-lottie";
 
 function EmptyChatContainer() {
@@ -8,7 +8,7 @@ function EmptyChatContainer() {
         isClickToPauseDisabled={true}
         height={200}
         width={200}
-        options={animationDefaultOptions}
+        options={animationDefaultOptionsChat}
       />
       <div className="text-opacity-80 text-white flex flex-col gap-5 items-center mt-10 lg:text-4xl text-3xl transition-all duration-300 text-center">
         <h3 className="moderustic-thin">

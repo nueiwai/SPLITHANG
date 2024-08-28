@@ -70,7 +70,7 @@ const MessageBar = () => {
           className="bg-cyan-500 rounded-md flex items-center justify-center p-4 focus:border-none hover:bg-cyan-400 focus:bg-blue-600 focus:outline-none focus:text-white duration-300 transition-all"
           onClick={sendMessage}
         >
-          <IoIosSend className="text-2xl" />
+          <IoIosSend className="text-2xl text-white" />
         </button>
       </div>
     </div>

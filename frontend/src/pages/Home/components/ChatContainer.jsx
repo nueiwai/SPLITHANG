@@ -4,7 +4,7 @@ import MessageContainer from "./MessageContainer";
 
 function ChatContainer() {
   return (
-    <div class="fixed top-0 h-[100vh] w-[100vw] bg-blue-800 flex flex-col md:static md:flex-1">
+    <div className="fixed top-0 h-[100vh] w-[100vw] bg-blue-800 flex flex-col md:static md:flex-1">
       <ChatHeader />
       <MessageContainer />
       <MessageBar />
