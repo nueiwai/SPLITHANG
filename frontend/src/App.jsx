@@ -9,6 +9,7 @@ import { useAppState } from "./zustand/zustand";
 import { Spinner } from "flowbite-react";
 import { apiClient } from "./lib/api-client";
 import { GET_USER_INFO } from "./utils/constants";
+import SocketProvider from "./context/SocketContext";
 
 function App() {
   const { userInfo, setUserInfo } = useAppState();
@@ -62,44 +63,46 @@ function App() {
 
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/signup"
-            element={
-              <MainRoute>
-                <Signup />
-              </MainRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <MainRoute>
-                <Login />
-              </MainRoute>
-            }
-          />
-          <Route
-            path="/home"
-            element={
-              <PrivateRoute>
-                <Home />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/signup" />} />
-        </Routes>
-      </BrowserRouter>
+      <SocketProvider>
+        <Toaster position="top-center" reverseOrder={false} />
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/signup"
+              element={
+                <MainRoute>
+                  <Signup />
+                </MainRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <MainRoute>
+                  <Login />
+                </MainRoute>
+              }
+            />
+            <Route
+              path="/home"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/signup" />} />
+          </Routes>
+        </BrowserRouter>
+      </SocketProvider>
     </>
   );
 }

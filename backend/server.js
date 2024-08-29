@@ -1,10 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import mongoose, { set } from 'mongoose';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/AuthRoutes.js';
 import contactsRoutes from './routes/ContactRoutes.js';
+import setupSocket from './socket.js';
 
 dotenv.config();
 
@@ -45,6 +46,8 @@ const server = app.listen(PORT, () => {
 }
 );
 
+// socket.io
+setupSocket(server);
 
 // database connection
 async function connectDB() {
