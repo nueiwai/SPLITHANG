@@ -1,14 +1,48 @@
 import { Tooltip, Button, Modal, TextInput } from "flowbite-react";
 import { BiSolidCommentAdd } from "react-icons/bi";
 import { useState } from "react";
+import { apiClient } from "../../../lib/api-client";
+import { SEARCH_CONTACTS_ROUTE } from "../../../utils/constants";
+import { useAppState } from "../../../zustand/zustand";
 
 function NewDM() {
+  const { setSelectedChatType, setSelectedChatData } = useAppState();
   const [openAddDMModal, setOpenAddDMModal] = useState(false);
   const [searchedContact, setSearchedContact] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const addDM = () => {};
+  const searchContact = async (searchTerm) => {
+    try {
+      if (searchTerm.length > 0) {
+        const res = await apiClient.post(
+          SEARCH_CONTACTS_ROUTE,
+          { searchTerm },
+          { withCredentials: true }
+        );
 
-  const searchContact = async (searchTerm) => {};
+        if (res.status === 200 && Array.isArray(res.data)) {
+          setSearchedContact(res.data);
+        } else {
+          console.log("No contacts found or unexpected response:", res);
+          setSearchedContact([]);
+        }
+      } else {
+        setSearchedContact([]);
+      }
+    } catch (error) {
+      console.error("Error during contact search:", error);
+      if (error.response) {
+        console.error("Response error:", error.response.data);
+      }
+    }
+  };
+
+  const selectNewContact = (contact) => {
+    setOpenAddDMModal(false);
+    setSelectedChatType("contact");
+    setSelectedChatData(contact);
+    setSearchedContact([]);
+  };
 
   return (
     <>
@@ -40,39 +74,53 @@ function NewDM() {
               id="search"
               type="text"
               placeholder="Search..."
-              value={searchedContact}
-              onChange={(e) => searchContact(e.target.value)}
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                searchContact(e.target.value);
+              }}
               className="w-[80%] mx-auto"
             />
           </div>
-          <div id="contact-list" className="px-6 py-4 moderustic-thin">
+          <div
+            id="contact-list"
+            className="flex flex-col gap-3 px-6 py-4 moderustic-thin max-h-60 overflow-y-auto"
+          >
             {searchedContact.length > 0 ? (
-              searchedContact.map((contact, index) => (
-                <div key={index} className="contact-item">
-                  <p>{contact.name}</p>
+              searchedContact.map((contact) => (
+                <div
+                  key={contact._id}
+                  className="flex items-center gap-3 cursor-pointer"
+                  onClick={() => selectNewContact(contact)}
+                >
+                  <div className="flex gap-6 justify-center items-center">
+                    <img
+                      src={contact.profilePic}
+                      alt="default-avatar"
+                      className="rounded-full w-10 h-10 m-1"
+                    />
+                    <div className="flex flex-col">
+                      <div className="text-lg moderustic-thin">
+                        {contact.displayName}
+                      </div>
+                      <div className="text-sm moderustic-thin">
+                        {contact.email}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
-              <div>
-                <div className="text-opacity-80 flex flex-col gap-5 items-center mt-10 lg:text-2xl text-xl transition-all duration-300 text-center">
-                  <h3 className="moderustic-md">
-                    Hi<span className="text-blue-700">!</span> <span> </span>
-                    Please search a contact to start a
-                    <span className="text-blue-600"> Chat </span>
-                  </h3>
-                </div>
+              <div className="moderustic-md flex justify-center items-center text-center mx-8 text-xl">
+                <h3>
+                  Hi<span className="text-blue-700">!</span> <span> </span>
+                  Please search a contact to start a
+                  <span className="text-blue-600"> Chat </span>
+                </h3>
               </div>
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer className="flex justify-center gap-4 items-center my-2">
-          <Button onClick={() => setOpenAddDMModal(false)} color="gray">
-            Close
-          </Button>
-          <Button onClick={addDM} color="blue">
-            Add
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

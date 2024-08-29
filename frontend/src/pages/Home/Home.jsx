@@ -7,7 +7,7 @@ import EmptyChatContainer from "../Home/components/EmptyChatContainer";
 
 //Chat
 function Home() {
-  const { userInfo } = useAppState();
+  const { userInfo, selectedChatType } = useAppState();
   const navigate = useNavigate();
   useEffect(() => {
     if (!userInfo.profileSetup) {
@@ -17,8 +17,7 @@ function Home() {
   return (
     <div className="flex h-[100vh] w-[100vw] overflow-hidden">
       <ContactContainer />
-      {/* <EmptyChatContainer /> */}
-      {/* <ChatContainer /> */}
+      {selectedChatType ? <ChatContainer /> : <EmptyChatContainer />}
     </div>
   );
 }

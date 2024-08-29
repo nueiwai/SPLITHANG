@@ -62,10 +62,6 @@ const MessageBar = () => {
           )}
         </div>
 
-        {/* <button className="focus:border-none focus:outline-none focus:text-white duration-300 transition-all">
-          <RiEmojiStickerLine className="text-2xl text-cyan-500" />
-        </button> */}
-
         <button
           className="bg-cyan-500 rounded-md flex items-center justify-center p-4 focus:border-none hover:bg-cyan-400 focus:bg-blue-600 focus:outline-none focus:text-white duration-300 transition-all"
           onClick={sendMessage}

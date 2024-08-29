@@ -3,7 +3,7 @@ import UserProfile from "./UserProfile";
 
 function ContactContainer() {
   return (
-    <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] max-w-full bg-blue-400 border-r-4 border-blue-950 ps-2">
+    <div className="relative w-full md:w-[35vw] lg:w-[30vw] xl:w-[20vw] max-w-[100vw] bg-blue-400 border-r-4 border-blue-950 ps-2">
       <h1 className="moderustic-md font-bold text-blue-900 text-center text-2xl my-2">
         SplitHang
       </h1>

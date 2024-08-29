@@ -26,7 +26,7 @@ function UserProfile() {
     }
   };
   return (
-    <div className="absolute bottom-0 h-16 flex items-center justify-between start-0 px-6 w-full bg-blue-800 border-t-2 border-cyan-500 shadow-[0_-6px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-lg">
+    <div className="absolute bottom-0 h-[10vh] flex items-center justify-between start-0 px-6 w-full bg-blue-800 border-t-2 border-cyan-500 shadow-[0_-6px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-lg">
       <div className="flex gap-6 justify-center items-center">
         <img
           src={userInfo.profilePic}
