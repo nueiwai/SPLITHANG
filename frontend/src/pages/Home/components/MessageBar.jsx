@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RiEmojiStickerLine, RiAttachment2 } from "react-icons/ri";
 import { IoIosSend } from "react-icons/io";
-import { useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
+import { useAppState } from "../../../zustand/zustand";
+import { useSocket } from "../../../context/SocketContext";
 
 const MessageBar = () => {
+  const { selectedChatType, selectedChatData, userInfo } = useAppState();
+  const socket = useSocket();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const emojiRef = useRef(null);
@@ -13,7 +16,21 @@ const MessageBar = () => {
     setMessage((msg) => msg + emoji.emoji);
   };
 
-  const sendMessage = async () => {};
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    if (selectedChatType === "contact" && socket) {
+      console.log(`Sending message to ${selectedChatData.displayName}`);
+      socket.emit("sendMessage", {
+        sender: userInfo._id,
+        content: message,
+        recipient: selectedChatData._id,
+        messageType: "text",
+        fileUrl: undefined,
+      });
+      setMessage("");
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -39,7 +56,7 @@ const MessageBar = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className=" focus:border-none focus:outline-none focus:text-white duration-300 transition-all">
+        <button className="focus:border-none focus:outline-none focus:text-white duration-300 transition-all">
           <RiAttachment2 className="text-2xl text-cyan-500" />
         </button>
 
@@ -63,7 +80,7 @@ const MessageBar = () => {
         </div>
 
         <button
-          className="bg-cyan-500 rounded-md flex items-center justify-center p-4 focus:border-none hover:bg-cyan-400 focus:bg-blue-600 focus:outline-none focus:text-white duration-300 transition-all"
+          className="bg-cyan-500 rounded-md flex items-center justify-center focus:border-none hover:bg-cyan-400 p-4"
           onClick={sendMessage}
         >
           <IoIosSend className="text-2xl text-white" />
