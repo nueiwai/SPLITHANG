@@ -4,16 +4,63 @@ import { IoIosSend } from "react-icons/io";
 import EmojiPicker from "emoji-picker-react";
 import { useAppState } from "../../../zustand/zustand";
 import { useSocket } from "../../../context/SocketContext";
+import { apiClient } from "../../../lib/api-client";
+import { MESSAGES_ROUTES, UPLOAD_FILE_ROUTE } from "../../../utils/constants";
 
 const MessageBar = () => {
-  const { selectedChatType, selectedChatData, userInfo } = useAppState();
+  const {
+    selectedChatType,
+    selectedChatData,
+    userInfo,
+    setIsUploading,
+    setFileUploadProgress,
+  } = useAppState();
   const socket = useSocket();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const emojiRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const handleAddEmoji = (emoji) => {
     setMessage((msg) => msg + emoji.emoji);
+  };
+
+  const handleAddAttachment = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleAttachmentChange = async (e) => {
+    try {
+      const file = e.target.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        setIsUploading(true);
+        const res = await apiClient.post(UPLOAD_FILE_ROUTE, formData, {
+          withCredentials: true,
+          onUploadProgress: (data) => {
+            setFileUploadProgress(Math.round((100 * data.loaded) / data.total));
+          },
+        });
+        if (res.status === 200 && res.data) {
+          setIsUploading(false);
+          if (selectedChatType === "contact") {
+            socket.emit("sendMessage", {
+              sender: userInfo._id,
+              content: undefined,
+              recipient: selectedChatData._id,
+              messageType: "file",
+              fileUrl: res.data.filePath,
+            });
+          }
+        }
+      }
+      console.log(file);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const sendMessage = async () => {
@@ -56,14 +103,23 @@ const MessageBar = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className="focus:border-none focus:outline-none focus:text-white duration-300 transition-all">
+        <button
+          className="focus:border-none focus:outline-none focus:text-white duration-300 transition-all"
+          onClick={handleAddAttachment}
+        >
           <RiAttachment2 className="text-2xl text-cyan-500" />
         </button>
+        <input
+          type="file"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleAttachmentChange}
+        />
 
         <div className="relative">
           <button
             className="text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all"
-            onClick={() => setEmojiPickerOpen(true)}
+            onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
           >
             <RiEmojiStickerLine className="text-2xl text-cyan-500" />
           </button>

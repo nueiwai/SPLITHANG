@@ -1,4 +1,4 @@
-import { Tooltip, Button, Modal, TextInput } from "flowbite-react";
+import { Tooltip, Modal, TextInput } from "flowbite-react";
 import { BiSolidCommentAdd } from "react-icons/bi";
 import { useState } from "react";
 import { apiClient } from "../../../lib/api-client";
