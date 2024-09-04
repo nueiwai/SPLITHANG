@@ -54,6 +54,14 @@ const MessageBar = () => {
               messageType: "file",
               fileUrl: res.data.filePath,
             });
+          } else if (selectedChatType === "group" && socket) {
+            socket.emit("sendGroupMessage", {
+              sender: userInfo._id,
+              content: undefined,
+              messageType: "file",
+              fileUrl: res.data.filePath,
+              groupId: selectedChatData._id,
+            });
           }
         }
       }
@@ -75,8 +83,16 @@ const MessageBar = () => {
         messageType: "text",
         fileUrl: undefined,
       });
-      setMessage("");
+    } else if (selectedChatType === "group" && socket) {
+      socket.emit("sendGroupMessage", {
+        sender: userInfo._id,
+        content: message,
+        messageType: "text",
+        fileUrl: undefined,
+        groupId: selectedChatData._id,
+      });
     }
+    setMessage("");
   };
 
   useEffect(() => {

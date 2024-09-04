@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useAppState } from "../../../zustand/zustand";
 import moment from "moment";
 import { apiClient } from "../../../lib/api-client";
-import { GET_ALL_MESSAGES_ROUTE, HOST } from "../../../utils/constants";
+import {
+  GET_ALL_MESSAGES_ROUTE,
+  GET_GROUP_MESSAGES_ROUTE,
+  HOST,
+} from "../../../utils/constants";
 import { FaFile } from "react-icons/fa";
 import { MdDownload, MdClose } from "react-icons/md";
 
@@ -37,8 +41,26 @@ const MessageContainer = () => {
       }
     };
 
+    const getGroupMessages = async () => {
+      try {
+        const response = await apiClient.get(
+          `${GET_GROUP_MESSAGES_ROUTE}/${selectedChatData._id}`,
+          { withCredentials: true }
+        );
+
+        if (response.data.messages) {
+          setSelectedChatMessages(response.data.messages);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     if (selectedChatData._id) {
-      if (selectedChatType === "contact") getMessages();
+      if (selectedChatType === "contact") {
+        getMessages();
+      } else if (selectedChatType === "group") {
+        getGroupMessages();
+      }
     }
   }, [selectedChatData, selectedChatType, setSelectedChatMessages]);
 
@@ -90,6 +112,7 @@ const MessageContainer = () => {
             </div>
           )}
           {selectedChatType === "contact" && renderDMMessages(message)}
+          {selectedChatType === "group" && renderGroupMessages(message)}
         </div>
       );
     });
@@ -169,6 +192,101 @@ const MessageContainer = () => {
       </div>
     </div>
   );
+
+  const renderGroupMessages = (message) => {
+    return (
+      <div
+        className={`mt-5 ${
+          message.sender._id === userInfo._id ? "text-right" : "text-left"
+        }`}
+      >
+        {message.sender._id !== userInfo._id && (
+          <div className="flex items-center gap-2 text-white">
+            <img
+              src={message.sender.profilePic}
+              alt="default-avatar"
+              className="rounded-full w-8 h-8 m-1"
+            />
+            {message.sender.displayName ? (
+              <div className="text-sm moderustic-thin">
+                {message.sender.displayName}
+              </div>
+            ) : (
+              <div className="text-sm moderustic-thin">
+                {message.sender.email}
+              </div>
+            )}
+          </div>
+        )}
+
+        {message.messageType === "text" && (
+          <div
+            className={`${
+              message.sender._id === userInfo._id
+                ? "bg-blue-700 text-white"
+                : "bg-blue-400 text-white ml-8"
+            } border inline-block p-4 rounded-md my-1 max-w-[50%] break-words`}
+          >
+            {message.content}
+          </div>
+        )}
+
+        {message.messageType === "file" && (
+          <div
+            className={`${
+              message.sender._id !== userInfo._id
+                ? "bg-blue-700 text-white"
+                : "bg-blue-400 text-white ml-8"
+            } border inline-block p-4 rounded-md my-1 max-w-[50%] break-words`}
+          >
+            {checkIfImage(message.fileUrl) ? (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setShowImage(true);
+                  setImageUrl(message.fileUrl);
+                }}
+              >
+                <img
+                  src={`${HOST}/${message.fileUrl}`}
+                  height={300}
+                  width={300}
+                />
+                <div className="flex justify-end mt-2 cursor-pointer">
+                  <MdDownload
+                    className="text-white h-6 w-6"
+                    onClick={downloadFile(message.fileUrl)}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-5">
+                <span className="bg-blend-darken rounded-xl p-4 text-white">
+                  <FaFile className="text-white h-12 w-12" />
+                </span>
+                <span>{message.fileUrl.split("/").pop()}</span>
+                <span>
+                  <MdDownload
+                    className="text-white h-6 w-6"
+                    onClick={downloadFile(message.fileUrl)}
+                  />
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+        {message.sender._id !== userInfo._id ? (
+          <div className="text-xs text-white ml-8">
+            {moment(message.timestamp).format("LT")}
+          </div>
+        ) : (
+          <div className="text-xs text-white">
+            {moment(message.timestamp).format("LT")}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="flex-1 overflow-y-auto p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full">

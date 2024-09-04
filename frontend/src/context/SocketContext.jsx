@@ -25,8 +25,12 @@ export const SocketProvider = ({ children }) => {
       });
 
       const receiveMessage = (message) => {
-        const { selectedChatData, selectedChatType, addMessage } =
-          useAppState.getState();
+        const {
+          selectedChatData,
+          selectedChatType,
+          addMessage,
+          addContactsInDMContacts,
+        } = useAppState.getState();
 
         if (
           selectedChatType !== undefined &&
@@ -36,10 +40,29 @@ export const SocketProvider = ({ children }) => {
           console.log("Received message:", message);
           addMessage(message);
         }
+        addContactsInDMContacts(message);
+      };
+
+      const receiveGroupMessage = (message) => {
+        const {
+          selectedChatData,
+          selectedChatType,
+          addMessage,
+          addGroupInGroupList,
+        } = useAppState.getState();
+
+        if (
+          selectedChatType !== undefined &&
+          selectedChatData._id === message.groupId
+        ) {
+          addMessage(message);
+          console.log("Received group message:", message);
+        }
+        addGroupInGroupList(message);
       };
 
       socket.current.on("receiveMessage", receiveMessage);
-
+      socket.current.on("receiveGroupMessage", receiveGroupMessage);
       return () => {
         socket.current.disconnect();
       };

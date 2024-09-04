@@ -92,4 +92,48 @@ export const createChatState = (set, get) => ({
       ],
     });
   },
+  addGroupInGroupList: (message) => {
+  const groups = get().groups; 
+  const groupId = message.groupId; 
+  const data = groups.find((group) => group._id === groupId); 
+
+  if (data) {
+    const index = groups.findIndex((group) => group._id === groupId); 
+
+    if (index !== -1) { 
+      groups.splice(index, 1);
+      groups.unshift(data); 
+    }
+  }
+},
+
+addContactsInDMContacts: (message) => {
+  const userId = get().userInfo.id;
+  const fromId = message.sender._id === userId
+    ? message.recipient._id
+    : message.sender._id;
+  const fromData = message.sender._id === userId
+    ? message.recipient
+    : message.sender;
+
+  const dmContacts = get().directMessagesContacts;
+  const data = dmContacts.find((contact) => contact._id === fromId);
+  const index = dmContacts.findIndex((contact) => contact._id === fromId);
+
+  console.log({ data, index, dmContacts, userId, message, fromData });
+
+  if (index !== -1) { 
+    console.log("in if condition");
+    dmContacts.splice(index, 1); 
+    dmContacts.unshift(data); 
+  } else {
+    console.log("in else condition");
+    dmContacts.unshift(fromData); 
+  }
+
+  set({ directMessagesContacts: dmContacts }); 
+}
+
+
+  
 });
