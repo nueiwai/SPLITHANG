@@ -9,24 +9,6 @@ import setupSocket from './socket.js';
 import messagesRoutes from './routes/MessagesRoutes.js';
 import groupRoutes from './routes/GroupRoutes.js';
 
-
-// hosting
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-// resolve path
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-console.log(__dirname);
-
-// use frontend build folder
-app.use( path.join(__dirname, '../frontend/dist'));
-
-// render client for any route
-app.get('*',(req,res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
-
 // load environment variables
 dotenv.config();
 
